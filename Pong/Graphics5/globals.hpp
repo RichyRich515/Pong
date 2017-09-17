@@ -1,5 +1,8 @@
 #pragma once
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
+
+using namespace std;
 
 extern float bspeed;
 extern float pspeed;
@@ -8,6 +11,9 @@ extern int p1mod, p2mod;
 
 extern unsigned s_width;
 extern unsigned s_height;
+
+extern int p1score;
+extern int p2score;
 
 sf::RectangleShape ball(sf::Vector2f(25.f, 25.f));
 sf::RectangleShape p1(sf::Vector2f(63.5f, 13.5f));
@@ -31,4 +37,9 @@ inline void centerOrigin(sf::Shape &o)
 sf::Color randcol()
 {
 	return sf::Color(rand() % 255, rand() % 255, rand() % 255);
+}
+
+int random(int l, int h)
+{
+	return rand() % (h - l + 1) + l;
 }

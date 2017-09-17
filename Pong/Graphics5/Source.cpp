@@ -5,15 +5,19 @@
 #include <string>
 #include <vector>
 
-using namespace std;
 
-float bspeed = 200.0f;
-float pspeed = 200.0f;
+constexpr float MIN_BALL_SPEED = 200.0f;
+constexpr float MAX_PADDLE_SPEED = 200.0f;
+float bspeed = MIN_BALL_SPEED;
+float pspeed = MIN_BALL_SPEED;
 float xmod = 1, ymod = 1;
 int p1mod = 0, p2mod = 0;
 
 unsigned s_width = 600;
 unsigned s_height = 800;
+
+int p1score = 0;
+int p2score = 0;
 
 int main()
 {
@@ -30,6 +34,12 @@ int main()
 	ball.setPosition(ball.getSize().x / 2.0f, s_height / 2.0f);
 	p1.setPosition(s_width / 2.0f, 50);
 	p2.setPosition(s_width / 2.0f, s_height - getWidth(p2) / 2.0f - 50);
+
+	sf::SoundBuffer boopBuffer;
+	if (!boopBuffer.loadFromFile("sfx\\boop.wav"))
+		return -1;
+	sf::Sound boopSound;
+	boopSound.setBuffer(boopBuffer);
 
 	timer.restart();
 	while (window.isOpen())
@@ -73,7 +83,7 @@ int main()
 			if (bn <= 0)
 			{
 				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
-				bspeed = 200.0f;
+				bspeed = MIN_BALL_SPEED;
 				ymod = 1;
 			}
 			else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
@@ -82,13 +92,15 @@ int main()
 				bspeed += 10.0f;
 				ball.setPosition(bx, p1.getPosition().y + getHeight(p1) / 2.0f + bh);
 				ball.setFillColor(randcol());
+				boopSound.play();
 			}
 		}
 		else
 		{
 			if (bs >= s_height)
 			{
-				// p1 score
+				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
+				bspeed = MIN_BALL_SPEED;
 				ymod = -1;
 			}
 			else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
@@ -97,6 +109,7 @@ int main()
 				bspeed += 10.0f;
 				ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
 				ball.setFillColor(randcol());
+				boopSound.play();
 			}
 		}
 		
