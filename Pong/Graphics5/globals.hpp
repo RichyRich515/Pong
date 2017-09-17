@@ -15,6 +15,8 @@ extern unsigned s_height;
 extern int p1score;
 extern int p2score;
 
+sf::Font courierFont;
+
 sf::RectangleShape ball(sf::Vector2f(25.f, 25.f));
 sf::RectangleShape p1(sf::Vector2f(63.5f, 13.5f));
 sf::RectangleShape p2(sf::Vector2f(63.5f, 13.5f));

@@ -3,8 +3,9 @@
 
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include <vector>
-
 
 constexpr float MIN_BALL_SPEED = 200.0f;
 constexpr float MAX_PADDLE_SPEED = 200.0f;
@@ -40,6 +41,25 @@ int main()
 		return -1;
 	sf::Sound boopSound;
 	boopSound.setBuffer(boopBuffer);
+
+	if (!courierFont.loadFromFile("font\\cour.ttf"))
+		return -1;
+	sf::Text p1scoreText;
+	sf::Text p2scoreText;
+	p1scoreText.setFont(courierFont);
+	p2scoreText.setFont(courierFont);
+	p1scoreText.setCharacterSize(60);
+	p2scoreText.setCharacterSize(60);
+	p1scoreText.setString("00");
+	p2scoreText.setString("00");
+	cout << p1scoreText.findCharacterPos(0).y;
+	p1scoreText.setPosition(0, s_height / 2.0f - p2scoreText.getCharacterSize() - 15);
+	cout << p2scoreText.getGlobalBounds().width;
+	p2scoreText.setPosition(s_width - p2scoreText.findCharacterPos(2).x, s_height / 2.0f - 10);
+
+	sf::RectangleShape midline(sf::Vector2f(s_width, 2.0f));
+	centerOrigin(midline);
+	midline.setPosition(s_width / 2.0f, s_height / 2.0f);
 
 	timer.restart();
 	while (window.isOpen())
@@ -82,6 +102,7 @@ int main()
 		{
 			if (bn <= 0)
 			{
+				++p2score;
 				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
 				bspeed = MIN_BALL_SPEED;
 				ymod = 1;
@@ -99,6 +120,7 @@ int main()
 		{
 			if (bs >= s_height)
 			{
+				++p1score;
 				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
 				bspeed = MIN_BALL_SPEED;
 				ymod = -1;
@@ -119,24 +141,27 @@ int main()
 		p2.move(pspeed * p2mod * dt, 0);
 
 		if ((p1.getPosition().x + getWidth(p1) / 2.0f) > s_width)
-		{
 			p1.setPosition(s_width - getWidth(p1) / 2.0f, p1.getPosition().y);
-		}
 		else if ((p1.getPosition().x - getWidth(p1) / 2.0f) < 0)
-		{
 			p1.setPosition(getWidth(p1) / 2.0f, p1.getPosition().y);
-		}
-
 		if ((p2.getPosition().x + getWidth(p2) / 2.0f) > s_width)
-		{
 			p2.setPosition(s_width - getWidth(p2) / 2.0f, p2.getPosition().y);
-		}
 		else if ((p2.getPosition().x - getWidth(p2) / 2.0f) < 0)
-		{
 			p2.setPosition(getWidth(p2) / 2.0f, p2.getPosition().y);
-		}
+
+		// score texts
+		stringstream p1scorebuff;
+		p1scorebuff << setfill('0') << setw(2) << p1score;;
+		stringstream p2scorebuff;
+		p2scorebuff << setfill('0') << setw(2) << p2score;;
+		p1scoreText.setString(p1scorebuff.str());
+		p2scoreText.setString(p2scorebuff.str());
 
 		window.clear();
+		window.draw(p1scoreText);
+		window.draw(p2scoreText);
+		window.draw(midline);
+
 		window.draw(ball);
 		window.draw(p1);
 		window.draw(p2);
