@@ -36,12 +36,13 @@ inline void centerOrigin(sf::Shape &o)
 	o.setOrigin(o.getLocalBounds().width / 2.0f, o.getLocalBounds().height / 2.0f);
 }
 
-sf::Color randcol()
-{
-	return sf::Color(rand() % 255, rand() % 255, rand() % 255);
-}
-
 int random(int l, int h)
 {
 	return rand() % (h - l + 1) + l;
 }
+
+sf::Color randHCcol()
+{
+	return sf::Color(random(127, 255), random(127, 255), random(127, 255));
+}
+

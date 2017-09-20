@@ -20,6 +20,18 @@ unsigned s_height = 800;
 int p1score = 0;
 int p2score = 0;
 
+float ballSpeedIncrease = 25.f;
+
+sf::Color p1Color = sf::Color(255, 64, 64);
+sf::Color p2Color = sf::Color(0, 255, 127);
+
+void resetBall()
+{
+	ball.setPosition(rand() % (unsigned)(s_width + ball.getSize().x) - ball.getSize().x / 2.0f, s_height / 2.0f);
+	bspeed = MIN_BALL_SPEED;
+	return;
+}
+
 int main()
 {
 	srand((unsigned)time(NULL));
@@ -34,7 +46,9 @@ int main()
 	centerOrigin(p2);
 	ball.setPosition(ball.getSize().x / 2.0f, s_height / 2.0f);
 	p1.setPosition(s_width / 2.0f, 50);
-	p2.setPosition(s_width / 2.0f, s_height - getWidth(p2) / 2.0f - 50);
+	p2.setPosition(s_width / 2.0f, s_height - 50);
+	p1.setFillColor(p1Color);
+	p2.setFillColor(p2Color);
 
 	sf::SoundBuffer boopBuffer;
 	if (!boopBuffer.loadFromFile("sfx\\boop.wav"))
@@ -52,9 +66,7 @@ int main()
 	p2scoreText.setCharacterSize(60);
 	p1scoreText.setString("00");
 	p2scoreText.setString("00");
-	cout << p1scoreText.findCharacterPos(0).y;
 	p1scoreText.setPosition(0, s_height / 2.0f - p2scoreText.getCharacterSize() - 15);
-	cout << p2scoreText.getGlobalBounds().width;
 	p2scoreText.setPosition(s_width - p2scoreText.findCharacterPos(2).x, s_height / 2.0f - 10);
 
 	sf::RectangleShape midline(sf::Vector2f(s_width, 2.0f));
@@ -103,16 +115,15 @@ int main()
 			if (bn <= 0)
 			{
 				++p2score;
-				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
-				bspeed = MIN_BALL_SPEED;
+				resetBall();
 				ymod = 1;
+				boopSound.play();
 			}
 			else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
 			{
 				ymod = 1;
-				bspeed += 10.0f;
-				ball.setPosition(bx, p1.getPosition().y + getHeight(p1) / 2.0f + bh);
-				ball.setFillColor(randcol());
+				bspeed += ballSpeedIncrease;
+				ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
 				boopSound.play();
 			}
 		}
@@ -121,16 +132,15 @@ int main()
 			if (bs >= s_height)
 			{
 				++p1score;
-				ball.setPosition(rand() % (unsigned)(s_width + bh * 2) - bh, s_height / 2.0f);
-				bspeed = MIN_BALL_SPEED;
+				resetBall();
+				boopSound.play();
 				ymod = -1;
 			}
 			else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
 			{
 				ymod = -1;
-				bspeed += 10.0f;
+				bspeed += ballSpeedIncrease;
 				ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
-				ball.setFillColor(randcol());
 				boopSound.play();
 			}
 		}
@@ -150,6 +160,7 @@ int main()
 			p2.setPosition(getWidth(p2) / 2.0f, p2.getPosition().y);
 
 		// score texts
+		// TODO: this but better
 		stringstream p1scorebuff;
 		p1scorebuff << setfill('0') << setw(2) << p1score;;
 		stringstream p2scorebuff;
