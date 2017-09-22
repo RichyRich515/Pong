@@ -145,6 +145,8 @@
   <ItemGroup>
     <ClInclude Include="globals.hpp" />
     <ClInclude Include="keyboard.hpp" />
+    <ClInclude Include="particle.hpp" />
+    <ClInclude Include="ParticleEmitter.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="sfx\boop.wav" />

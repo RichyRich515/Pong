@@ -14,6 +14,8 @@ float pspeed = MIN_BALL_SPEED;
 float xmod = 1, ymod = 1;
 int p1mod = 0, p2mod = 0;
 
+bool ballMoving = false;
+
 unsigned s_width = 600;
 unsigned s_height = 800;
 
@@ -21,16 +23,43 @@ int p1score = 0;
 int p2score = 0;
 
 float ballSpeedIncrease = 25.f;
+float ballPauseTimer = 0.0f;
+constexpr float BALL_PAUSE_TIME = 2.0f; // seconds\
 
 sf::Color p1Color = sf::Color(255, 64, 64);
 sf::Color p2Color = sf::Color(0, 255, 127);
 
+sf::RectangleShape directionLine;
+
+// set the direction line to point the right way
+void setDirectionLine()
+{
+	if (xmod > 0 && ymod > 0)
+		directionLine.setRotation(45);
+	else if (xmod < 0 && ymod > 0)
+		directionLine.setRotation(135);
+	else if (xmod < 0 && ymod < 0)
+		directionLine.setRotation(225);
+	else if (xmod > 0 && ymod < 0)
+		directionLine.setRotation(315);
+	directionLine.setPosition(ball.getPosition());
+}
+
+// reset the ball to the middle line
 void resetBall()
 {
 	ball.setPosition(rand() % (unsigned)(s_width + ball.getSize().x) - ball.getSize().x / 2.0f, s_height / 2.0f);
 	bspeed = MIN_BALL_SPEED;
+	ballMoving = false;
+	setDirectionLine();
 	return;
 }
+
+void updateTrail()
+{
+
+}
+
 
 int main()
 {
@@ -69,6 +98,11 @@ int main()
 	p1scoreText.setPosition(0, s_height / 2.0f - p2scoreText.getCharacterSize() - 15);
 	p2scoreText.setPosition(s_width - p2scoreText.findCharacterPos(2).x, s_height / 2.0f - 10);
 
+	directionLine = sf::RectangleShape(sf::Vector2f(75.0f, 2.0f));
+	directionLine.setFillColor(sf::Color::Red);
+	setDirectionLine();
+	directionLine.setOrigin(0, 1.0f);
+
 	sf::RectangleShape midline(sf::Vector2f(s_width, 2.0f));
 	centerOrigin(midline);
 	midline.setPosition(s_width / 2.0f, s_height / 2.0f);
@@ -89,61 +123,75 @@ int main()
 
 		float dt = timer.restart().asSeconds();
 
-		ball.move(sf::Vector2f(xmod * bspeed * dt, ymod * bspeed * dt));
-
-		float bh = getWidth(ball) / 2.0f;
-		float bx = ball.getPosition().x;
-		float by = ball.getPosition().y;
-		float bw = ball.getPosition().x - bh;
-		float bn = ball.getPosition().y - bh;
-		float be = ball.getPosition().x + bh;
-		float bs = ball.getPosition().y + bh;
-
-		if (bw <= 0)
+		if (ballMoving)
 		{
-			ball.setPosition(0 + bh, by);
-			xmod = 1;
-		}
-		else if (be >= s_width)
-		{
-			ball.setPosition(s_width - bh, by);
-			xmod = -1;
-		}
+			ball.move(sf::Vector2f(xmod * bspeed * dt, ymod * bspeed * dt));
 
-		if (by < s_height / 2.0f)
-		{
-			if (bn <= 0)
+			float bh = getWidth(ball) / 2.0f;
+			float bx = ball.getPosition().x;
+			float by = ball.getPosition().y;
+			float bw = ball.getPosition().x - bh;
+			float bn = ball.getPosition().y - bh;
+			float be = ball.getPosition().x + bh;
+			float bs = ball.getPosition().y + bh;
+
+			if (bw <= 0)
 			{
-				++p2score;
-				resetBall();
-				ymod = 1;
-				boopSound.play();
+				ball.setPosition(0 + bh, by);
+				xmod = 1;
 			}
-			else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
+			else if (be >= s_width)
 			{
-				ymod = 1;
-				bspeed += ballSpeedIncrease;
-				ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
-				boopSound.play();
+				ball.setPosition(s_width - bh, by);
+				xmod = -1;
 			}
+
+			if (by < s_height / 2.0f)
+			{
+				if (bn <= 0)
+				{
+					++p2score;
+					ymod = 1;
+					resetBall();
+					boopSound.play();
+				}
+				else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
+				{
+					ymod = 1;
+					bspeed += ballSpeedIncrease;
+					ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
+					boopSound.play();
+				}
+			}
+			else
+			{
+				if (bs >= s_height)
+				{
+					++p1score;
+					ymod = -1;
+					resetBall();
+					boopSound.play();
+				}
+				else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
+				{
+					ymod = -1;
+					bspeed += ballSpeedIncrease;
+					ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
+					boopSound.play();
+				}
+			}
+		}
+		else if (ballPauseTimer >= BALL_PAUSE_TIME)
+		{
+			ballPauseTimer = 0;
+			ballMoving = true;
 		}
 		else
 		{
-			if (bs >= s_height)
-			{
-				++p1score;
-				resetBall();
-				boopSound.play();
-				ymod = -1;
-			}
-			else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
-			{
-				ymod = -1;
-				bspeed += ballSpeedIncrease;
-				ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
-				boopSound.play();
-			}
+
+			ballPauseTimer += dt;
 		}
+			
 		
 		checkKeyboard();
 
@@ -172,6 +220,8 @@ int main()
 		window.draw(p1scoreText);
 		window.draw(p2scoreText);
 		window.draw(midline);
+		if (ballPauseTimer)
+			window.draw(directionLine);
 
 		window.draw(ball);
 		window.draw(p1);
