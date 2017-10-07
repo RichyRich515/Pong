@@ -8,17 +8,19 @@ class ParticleEmitter
 {
 public:
 	size_t poolsize;
-	std::vector<Particle> v;
+	std::vector<Particle *> v;
 	sf::Vector2f acceleration;
 	sf::Vector2f direction;
 
-	std::vector<Particle> const& update()
+	// delta time, render window to draw to
+	void update(float dt, sf::RenderWindow & window)
 	{
 		for (size_t i = 0; i < poolsize; ++i)
 		{
-			if (v[i].alive)
+			Particle *p = v[i];
+			if (p->alive)
 			{
-
+				window.draw(p->update(dt, acceleration));
 			}
 		}
 	}

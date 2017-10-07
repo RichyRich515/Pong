@@ -55,19 +55,12 @@ void resetBall()
 	return;
 }
 
-void updateTrail()
-{
-
-}
-
-
 int main()
 {
 	srand((unsigned)time(NULL));
 
 	sf::RenderWindow window(sf::VideoMode(s_width, s_height), "Ping");
 	sf::Clock timer;
-	unsigned dt = 0;
 	
 	// Init
 	centerOrigin(ball);
