@@ -188,11 +188,9 @@ int main()
 		}
 		else
 		{
-
 			ballPauseTimer += dt;
 		}
-			
-		
+
 		checkKeyboard();
 
 		p1.move(pspeed * p1mod * dt, 0);
@@ -220,10 +218,9 @@ int main()
 		window.draw(p1scoreText);
 		window.draw(p2scoreText);
 		window.draw(midline);
+		window.draw(ball);
 		if (ballPauseTimer)
 			window.draw(directionLine);
-
-		window.draw(ball);
 		window.draw(p1);
 		window.draw(p2);
 		window.display();

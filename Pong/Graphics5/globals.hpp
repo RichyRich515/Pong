@@ -2,6 +2,7 @@
 #include <SFML\Graphics.hpp>
 #include <SFML\Audio.hpp>
 
+#include "ParticleEmitter.hpp"
 using namespace std;
 
 extern float bspeed;
