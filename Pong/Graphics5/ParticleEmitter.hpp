@@ -3,6 +3,7 @@
 #include <SFML\Graphics.hpp>
 #include <vector>
 #include "particle.hpp"
+#include "Color.hpp"
 
 class ParticleEmitter
 {
@@ -13,16 +14,22 @@ public:
 	float duration; // how long the particle system exists
 	bool looping; // restart after duration?
 	
-	size_t emission; // particles per second
+	bool burst;
+
+	// if burst, particles per burst
+	// otherwise particles per second
+	size_t emission;
+
+	sf::Vector2f position; // position in world space that particle emitter exists
 
 	// selects random velocity between low and high
 	float startVelocityLow;
 	float startVelocityHigh;
 
-	float maxVelocity;
 	sf::Vector2f acceleration;
+	float maxVelocity;
 
-	// Selects value at birth of particle between two degrees
+	// Selects random value between range at birth of particle
 	float directionLow;
 	float directionHigh;
 	
@@ -30,29 +37,30 @@ public:
 	float lifeLow;
 	float lifeHigh;
 
+	// TODO: make this a vector of colors, so rainbow blending is possible
+	// Born with start color then linear RGBA blend to end over time
 	sf::Color startColor;
 	sf::Color endColor;
 
-	ParticleEmitter(sf::RectangleShape const& shape, sf::Vector2f accel, size_t maxsize)
+	// doesnt do much, simply initializes the internal vector
+	ParticleEmitter(size_t maxsize)
 	{
 		poolsize = maxsize;
 		v = std::vector<Particle *>(poolsize);
 		for (size_t i = 0; i < poolsize; ++i)
 		{
 			Particle* temp = new Particle();
-			sf::Vector2f tv = sf::Vector2f();
-			temp->velocity = tv;
-			temp->setShape(shape);
 			v[i] = temp;
 		}
 	}
 
-	// render window to draw to
+	// render window to draw the particles to
 	void draw(sf::RenderWindow & window)
 	{
 		for (size_t i = 0; i < poolsize; ++i)
 		{
-			window.draw(*v[i]);
+			if (v[i]->alive)
+				window.draw(*v[i]);
 		}
 	}
 

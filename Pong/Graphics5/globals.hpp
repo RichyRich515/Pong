@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 #include <SFML\Audio.hpp>
-
+#include "Color.hpp"
 #include "ParticleEmitter.hpp"
 using namespace std;
 

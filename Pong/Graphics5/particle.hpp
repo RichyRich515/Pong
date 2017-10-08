@@ -1,14 +1,16 @@
 #pragma once
 
 #include <SFML\Graphics.hpp>
+#include "Color.hpp"
 
 class Particle : public sf::RectangleShape
 {
 public:
 	bool alive;
 	float lifetime;
+	float life;
 	sf::Vector2f velocity;
-
+	float rotationvelocity;
 	Particle()
 	{
 		alive = false;
@@ -32,8 +34,9 @@ public:
 
 	void update(float dt, sf::Vector2f a)
 	{
-		velocity = sf::Vector2f(a.x * dt, a.y * dt);
+		velocity = sf::Vector2f(velocity.x + a.x * dt, velocity.y + a.y * dt);
 		sf::Vector2f disp = sf::Vector2f(velocity.x * dt, velocity.y * dt);
+		float rot = rotationvelocity * dt;
 		move(disp);
 	}
 };

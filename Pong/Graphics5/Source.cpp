@@ -67,6 +67,7 @@ int main()
 	centerOrigin(p1);
 	centerOrigin(p2);
 	ball.setPosition(ball.getSize().x / 2.0f, s_height / 2.0f);
+	ball.setFillColor(sf::Color(255, 255, 100));
 	p1.setPosition(s_width / 2.0f, 50);
 	p2.setPosition(s_width / 2.0f, s_height - 50);
 	p1.setFillColor(p1Color);
@@ -146,14 +147,14 @@ int main()
 					++p2score;
 					ymod = 1;
 					resetBall();
-					boopSound.play();
+					//boopSound.play();
 				}
 				else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
 				{
 					ymod = 1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
-					boopSound.play();
+					//boopSound.play();
 				}
 			}
 			else
@@ -163,14 +164,14 @@ int main()
 					++p1score;
 					ymod = -1;
 					resetBall();
-					boopSound.play();
+					//boopSound.play();
 				}
 				else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
 				{
 					ymod = -1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
-					boopSound.play();
+					//boopSound.play();
 				}
 			}
 		}
