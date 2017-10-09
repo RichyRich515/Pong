@@ -1,6 +1,6 @@
 #include "globals.hpp"
 #include "keyboard.hpp"
-
+#include "ParticleEmitter.hpp"
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -31,23 +31,47 @@ sf::Color p2Color = sf::Color(0, 255, 127);
 
 sf::RectangleShape directionLine;
 
+static ParticleEmitter emitter1 = ParticleEmitter(500);
+
 // set the direction line to point the right way
 void setDirectionLine()
 {
+	float dir = 0;
 	if (xmod > 0 && ymod > 0)
+	{
+		dir = 225;
 		directionLine.setRotation(45);
+		emitter1.directionLow = dir - 15;
+		emitter1.directionHigh = dir + 15;
+	}
 	else if (xmod < 0 && ymod > 0)
+	{
+		dir = 315;
 		directionLine.setRotation(135);
+		emitter1.directionLow = dir - 15;
+		emitter1.directionHigh = dir + 15;
+	}
 	else if (xmod < 0 && ymod < 0)
+	{
+		dir = 45;
 		directionLine.setRotation(225);
+		emitter1.directionLow = dir - 15;
+		emitter1.directionHigh = dir + 15;
+	}
 	else if (xmod > 0 && ymod < 0)
+	{
+		dir = 135;
 		directionLine.setRotation(315);
+		emitter1.directionLow = dir - 15;
+		emitter1.directionHigh = dir + 15;
+	}
 	directionLine.setPosition(ball.getPosition());
 }
 
 // reset the ball to the middle line
 void resetBall()
 {
+	emitter1.active = false;
 	ball.setPosition(rand() % (unsigned)(s_width + ball.getSize().x) - ball.getSize().x / 2.0f, s_height / 2.0f);
 	bspeed = MIN_BALL_SPEED;
 	ballMoving = false;
@@ -94,13 +118,30 @@ int main()
 
 	directionLine = sf::RectangleShape(sf::Vector2f(75.0f, 2.0f));
 	directionLine.setFillColor(sf::Color::Red);
-	setDirectionLine();
 	directionLine.setOrigin(0, 1.0f);
 
 	sf::RectangleShape midline(sf::Vector2f(s_width, 2.0f));
 	centerOrigin(midline);
 	midline.setPosition(s_width / 2.0f, s_height / 2.0f);
 
+	emitter1.shape = sf::RectangleShape(sf::Vector2f(2.5f, 2.5f));
+	emitter1.startColor = sf::Color(0, 0, 255, 255);
+	emitter1.endColor = sf::Color(0, 0, 0, 0);
+	emitter1.startVelocityLow = 75.0f;
+	emitter1.startVelocityHigh = 200.0f;
+	emitter1.duration = 1.0f;
+	emitter1.emission = 100;
+	emitter1.burst = false;
+	emitter1.directionLow = 0;
+	emitter1.directionHigh = 360;
+	emitter1.acceleration = sf::Vector2f(0, 0);
+	emitter1.lifeLow = 0.0f;
+	emitter1.lifeHigh = 1.5f;
+	emitter1.looping = true;
+	emitter1.warm = false;
+	emitter1.init();
+
+	resetBall();
 	timer.restart();
 	while (window.isOpen())
 	{
@@ -133,11 +174,13 @@ int main()
 			{
 				ball.setPosition(0 + bh, by);
 				xmod = 1;
+				setDirectionLine();
 			}
 			else if (be >= s_width)
 			{
 				ball.setPosition(s_width - bh, by);
 				xmod = -1;
+				setDirectionLine();
 			}
 
 			if (by < s_height / 2.0f)
@@ -147,14 +190,15 @@ int main()
 					++p2score;
 					ymod = 1;
 					resetBall();
-					//boopSound.play();
+					boopSound.play();
 				}
 				else if (ball.getGlobalBounds().intersects(p1.getGlobalBounds()))
 				{
 					ymod = 1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
-					//boopSound.play();
+					setDirectionLine();
+					boopSound.play();
 				}
 			}
 			else
@@ -164,14 +208,15 @@ int main()
 					++p1score;
 					ymod = -1;
 					resetBall();
-					//boopSound.play();
+					boopSound.play();
 				}
 				else if (ball.getGlobalBounds().intersects(p2.getGlobalBounds()))
 				{
 					ymod = -1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
-					//boopSound.play();
+					setDirectionLine();
+					boopSound.play();
 				}
 			}
 		}
@@ -179,6 +224,7 @@ int main()
 		{
 			ballPauseTimer = 0;
 			ballMoving = true;
+			emitter1.active = true;
 		}
 		else
 		{
@@ -208,13 +254,18 @@ int main()
 		p1scoreText.setString(p1scorebuff.str());
 		p2scoreText.setString(p2scorebuff.str());
 
+		emitter1.position = ball.getPosition();
+		emitter1.update(dt);
+
+
 		window.clear();
 		window.draw(p1scoreText);
 		window.draw(p2scoreText);
 		window.draw(midline);
-		window.draw(ball);
 		if (ballPauseTimer)
 			window.draw(directionLine);
+		emitter1.draw(window);
+		window.draw(ball);
 		window.draw(p1);
 		window.draw(p2);
 		window.display();
