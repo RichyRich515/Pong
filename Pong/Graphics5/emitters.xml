@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<emitters>
+	<emitter id="0" name="Ball Trail" pool="200">
+    size_t poolsize; 
+
+	float duration;
+	bool active;
+	bool looping;
+	bool warm;
+
+	bool burst;
+	size_t emission;
+	float spawnTime;
+	float spawnClock;
+
+	sf::Vector2f position; 
+	float lifeLow;
+	float lifeHigh;
+	float startVelocityLow;
+	float startVelocityHigh;
+
+	sf::Vector2f acceleration;
+	float maxVelocity;
+	float directionLow;
+	float directionHigh;
+	sf::Color startColor;
+	sf::Color endColor;
+	</emitter>
+</emitters>

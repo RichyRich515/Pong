@@ -72,7 +72,7 @@ void setDirectionLine()
 void resetBall()
 {
 	emitter1.active = false;
-	ball.setPosition(rand() % (unsigned)(s_width + ball.getSize().x) - ball.getSize().x / 2.0f, s_height / 2.0f);
+	ball.setPosition(rand() % (unsigned)(s_width + ball.getRadius() * 2) - ball.getRadius(), s_height / 2.0f);
 	bspeed = MIN_BALL_SPEED;
 	ballMoving = false;
 	setDirectionLine();
@@ -90,7 +90,7 @@ int main()
 	centerOrigin(ball);
 	centerOrigin(p1);
 	centerOrigin(p2);
-	ball.setPosition(ball.getSize().x / 2.0f, s_height / 2.0f);
+	ball.setPosition(ball.getRadius(), s_height / 2.0f);
 	ball.setFillColor(sf::Color(255, 255, 100));
 	p1.setPosition(s_width / 2.0f, 50);
 	p2.setPosition(s_width / 2.0f, s_height - 50);
@@ -139,7 +139,32 @@ int main()
 	emitter1.lifeHigh = 1.5f;
 	emitter1.looping = true;
 	emitter1.warm = false;
+	emitter1.active = false;
 	emitter1.init();
+
+	ParticleEmitter burstEmitter1(2000);
+	burstEmitter1.shape = sf::RectangleShape(sf::Vector2f(2.0f, 2.0f));
+	burstEmitter1.startColor = p1Color;
+	burstEmitter1.endColor = sf::Color(0, 0, 0, 0);
+	burstEmitter1.startVelocityLow = 0.0f;
+	burstEmitter1.startVelocityHigh = 100.0f;
+	burstEmitter1.duration = 4.0f;
+	burstEmitter1.emission = 2000;
+	burstEmitter1.directionLow = -15;
+	burstEmitter1.directionHigh = 195;
+	burstEmitter1.acceleration = sf::Vector2f(0, 0);
+	burstEmitter1.lifeLow = 0.0f;
+	burstEmitter1.lifeHigh = 2.0f;
+	burstEmitter1.looping = false;
+	burstEmitter1.burst = true;
+	burstEmitter1.warm = false;
+	burstEmitter1.active = true;
+	burstEmitter1.init();
+
+	ParticleEmitter burstEmitter2 = burstEmitter1;
+	burstEmitter2.startColor = p2Color;
+	burstEmitter2.directionLow = 165;
+	burstEmitter2.directionHigh = 375;
 
 	resetBall();
 	timer.restart();
@@ -197,6 +222,8 @@ int main()
 					ymod = 1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p1.getPosition().y + getHeight(p2) / 2.0f + bh);
+					burstEmitter1.position = p1.getPosition();
+					burstEmitter1.boom();
 					setDirectionLine();
 					boopSound.play();
 				}
@@ -215,6 +242,8 @@ int main()
 					ymod = -1;
 					bspeed += ballSpeedIncrease;
 					ball.setPosition(bx, p2.getPosition().y - getHeight(p2) / 2.0f - bh);
+					burstEmitter2.position = p2.getPosition();
+					burstEmitter2.boom();
 					setDirectionLine();
 					boopSound.play();
 				}
@@ -257,6 +286,8 @@ int main()
 		emitter1.position = ball.getPosition();
 		emitter1.update(dt);
 
+		burstEmitter1.update(dt);
+		burstEmitter2.update(dt);
 
 		window.clear();
 		window.draw(p1scoreText);
@@ -265,6 +296,8 @@ int main()
 		if (ballPauseTimer)
 			window.draw(directionLine);
 		emitter1.draw(window);
+		burstEmitter1.draw(window);
+		burstEmitter2.draw(window);
 		window.draw(ball);
 		window.draw(p1);
 		window.draw(p2);

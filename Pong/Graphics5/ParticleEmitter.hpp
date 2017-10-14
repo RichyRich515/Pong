@@ -17,6 +17,7 @@ public:
 	bool active; // if not active, don't draw or update
 	bool looping; // restart after duration?
 	bool warm; // start particles in play already?
+
 	bool burst;
 	// if burst, particles per burst
 	// otherwise particles per second
@@ -42,7 +43,7 @@ public:
 	float directionHigh;
 
 	// TODO: make this a vector of colors, so "rainbow" blending is possible
-	// Born with start color then linear RGBA blend to end over time
+	// Born with start color then linear RGBA blend to end color over time
 	sf::Color startColor;
 	sf::Color endColor;
 
@@ -89,8 +90,11 @@ public:
 		if (active)
 		{
 			bool spawn = false;
+			size_t spawns = 0; // for burst
+
 			spawnClock += dt;
-			if (spawnClock >= spawnTime)
+			// TODO: looping and not burst
+			if (looping && spawnClock >= spawnTime)
 			{
 				spawnClock = 0;
 				spawn = true;
@@ -113,8 +117,41 @@ public:
 					v[i]->life = 0;
 					v[i]->startcolor = startColor;
 					v[i]->endcolor = endColor;
-					spawn = false;
+					if (burst)
+					{
+						if (++spawns > emission)
+						{
+							spawn = false;
+						}
+					}
+					else
+					{
+						spawn = false;
+					}
 				}
+			}
+		}
+	}
+
+	void boom()
+	{
+		size_t spawns = 0;
+		for (size_t i = 0; i < poolsize; ++i)
+		{
+			if (!v[i]->alive)
+			{
+				v[i]->alive = true;
+				v[i]->setShape(shape);
+				v[i]->setPosition(position);
+				float dir = random(directionLow, directionHigh);
+				float vel = random(startVelocityLow, startVelocityHigh);
+				v[i]->velocity = sf::Vector2f(vel * cos(toRAD(dir)), vel * sin(toRAD(dir)));
+				v[i]->lifetime = random(lifeLow, lifeHigh);
+				v[i]->life = 0;
+				v[i]->startcolor = startColor;
+				v[i]->endcolor = endColor;
+				if (++spawns >= emission)
+					break;
 			}
 		}
 	}
@@ -122,14 +159,23 @@ public:
 	// TODO: this
 	void init()
 	{
-		//if (burst)
-		//{
-		//}
-		//else
-		//{
+		if (burst)
+		{
+			if (looping)
+			{
+				spawnTime = duration;
+				spawnClock = spawnTime;
+			}
+			else
+			{
+				//boom();
+			}
+		}
+		else
+		{
 			spawnTime = 1.0f / emission;
 			spawnClock = 0.0f;
-		//}
+		}
 	}
 
 	~ParticleEmitter()

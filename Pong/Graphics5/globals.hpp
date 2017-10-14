@@ -23,7 +23,7 @@ extern int p2score;
 
 sf::Font courierFont;
 
-sf::RectangleShape ball(sf::Vector2f(25.f, 25.f));
+sf::CircleShape ball(25.f / 2);
 sf::RectangleShape p1(sf::Vector2f(63.5f, 13.5f));
 sf::RectangleShape p2(sf::Vector2f(63.5f, 13.5f));
 
@@ -61,3 +61,14 @@ sf::Color randHCcol()
 	return sf::Color(random(127, 255), random(127, 255), random(127, 255));
 }
 
+loadConfig()
+{
+	// xml stuff
+	pugi::xml_document doc;
+	pugi::xml_parse_result result = doc.load_file("test.xml");
+
+	cout << "Load result: " << result.description() << endl
+		<< "scene name = " << doc.child("scene").attribute("name").value() << endl
+		<< "source = " << doc.child("scene").child("message").child_value("source") << endl
+		<< "text = " << doc.child("scene").child("message").child_value("text") << endl;
+}
