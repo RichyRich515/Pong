@@ -61,7 +61,8 @@ sf::Color randHCcol()
 	return sf::Color(random(127, 255), random(127, 255), random(127, 255));
 }
 
-loadConfig()
+/*
+void loadConfig()
 {
 	// xml stuff
 	pugi::xml_document doc;
@@ -71,4 +72,4 @@ loadConfig()
 		<< "scene name = " << doc.child("scene").attribute("name").value() << endl
 		<< "source = " << doc.child("scene").child("message").child_value("source") << endl
 		<< "text = " << doc.child("scene").child("message").child_value("text") << endl;
-}
+} */

@@ -83,7 +83,7 @@ int main()
 {
 	srand((unsigned)time(NULL));
 
-	sf::RenderWindow window(sf::VideoMode(s_width, s_height), "Ping");
+	sf::RenderWindow window(sf::VideoMode(s_width, s_height), "2Pong");
 	sf::Clock timer;
 	
 	// Init
@@ -166,6 +166,11 @@ int main()
 	burstEmitter2.directionLow = 165;
 	burstEmitter2.directionHigh = 375;
 
+	ParticleEmitter burstEmitter3 = burstEmitter1;
+	burstEmitter3.startColor = ball.getFillColor();
+	burstEmitter3.directionLow = 0;
+	burstEmitter3.directionHigh = 360;
+
 	resetBall();
 	timer.restart();
 	while (window.isOpen())
@@ -200,12 +205,16 @@ int main()
 				ball.setPosition(0 + bh, by);
 				xmod = 1;
 				setDirectionLine();
+				burstEmitter3.position = ball.getPosition();
+				burstEmitter3.boom();
 			}
 			else if (be >= s_width)
 			{
 				ball.setPosition(s_width - bh, by);
 				xmod = -1;
 				setDirectionLine();
+				burstEmitter3.position = ball.getPosition();
+				burstEmitter3.boom();
 			}
 
 			if (by < s_height / 2.0f)
