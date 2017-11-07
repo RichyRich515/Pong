@@ -26,8 +26,8 @@ float ballSpeedIncrease = 25.f;
 float ballPauseTimer = 0.0f;
 constexpr float BALL_PAUSE_TIME = 2.0f; // seconds\
 
-sf::Color p1Color = sf::Color(255, 64, 64);
-sf::Color p2Color = sf::Color(0, 255, 127);
+sf::Color p1Color = sf::Color(255, 0, 0);
+sf::Color p2Color = sf::Color(0, 0, 255);
 
 sf::RectangleShape directionLine;
 
@@ -91,7 +91,6 @@ int main()
 	centerOrigin(p1);
 	centerOrigin(p2);
 	ball.setPosition(ball.getRadius(), s_height / 2.0f);
-	ball.setFillColor(sf::Color(255, 255, 100));
 	p1.setPosition(s_width / 2.0f, 50);
 	p2.setPosition(s_width / 2.0f, s_height - 50);
 	p1.setFillColor(p1Color);
@@ -167,7 +166,6 @@ int main()
 	burstEmitter2.directionHigh = 375;
 
 	ParticleEmitter burstEmitter3 = burstEmitter1;
-	burstEmitter3.startColor = ball.getFillColor();
 	burstEmitter3.directionLow = 0;
 	burstEmitter3.directionHigh = 360;
 
@@ -206,7 +204,9 @@ int main()
 				xmod = 1;
 				setDirectionLine();
 				burstEmitter3.position = ball.getPosition();
+				burstEmitter3.startColor = ball.getFillColor();
 				burstEmitter3.boom();
+				boopSound.play();
 			}
 			else if (be >= s_width)
 			{
@@ -214,7 +214,9 @@ int main()
 				xmod = -1;
 				setDirectionLine();
 				burstEmitter3.position = ball.getPosition();
+				burstEmitter3.startColor = ball.getFillColor();
 				burstEmitter3.boom();
+				boopSound.play();
 			}
 
 			if (by < s_height / 2.0f)
@@ -269,6 +271,8 @@ int main()
 			ballPauseTimer += dt;
 		}
 
+		ball.setFillColor(lerpRGBA(p1Color, p2Color, ball.getPosition().y / s_height));
+
 		checkKeyboard();
 
 		p1.move(pspeed * p1mod * dt, 0);
@@ -302,16 +306,20 @@ int main()
 		window.draw(p1scoreText);
 		window.draw(p2scoreText);
 		window.draw(midline);
-		if (ballPauseTimer)
-			window.draw(directionLine);
 		emitter1.draw(window);
 		burstEmitter1.draw(window);
 		burstEmitter2.draw(window);
 		window.draw(ball);
+		if (ballPauseTimer)
+			window.draw(directionLine);
 		window.draw(p1);
 		window.draw(p2);
 		window.display();
 	}
+	
+	if (boopSound.Playing)
+		boopSound.stop();
+
 
 	return 0;
 }
