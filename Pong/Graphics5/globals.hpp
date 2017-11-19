@@ -4,28 +4,18 @@
 #include <cassert>
 
 
+constexpr double Gravity = 10.0;
 constexpr double PI = 3.141592654;
 
 #define toRAD(d) (d * PI / 180)
 
-using namespace std;
-
-extern float bspeed;
-extern float pspeed;
-extern float xmod, ymod;
-extern int p1mod, p2mod;
-
-extern unsigned s_width;
-extern unsigned s_height;
+extern float s_width;
+extern float s_height;
 
 extern int p1score;
 extern int p2score;
 
 sf::Font courierFont;
-
-sf::CircleShape ball(25.f / 2);
-sf::RectangleShape p1(sf::Vector2f(63.5f, 13.5f));
-sf::RectangleShape p2(sf::Vector2f(63.5f, 13.5f));
 
 inline float getWidth(sf::Shape const &o)
 {
@@ -55,21 +45,3 @@ int random(int l, int h)
 {
 	return rand() % (h - l + 1) + l;
 }
-
-sf::Color randHCcol()
-{
-	return sf::Color(random(127, 255), random(127, 255), random(127, 255));
-}
-
-/*
-void loadConfig()
-{
-	// xml stuff
-	pugi::xml_document doc;
-	pugi::xml_parse_result result = doc.load_file("test.xml");
-
-	cout << "Load result: " << result.description() << endl
-		<< "scene name = " << doc.child("scene").attribute("name").value() << endl
-		<< "source = " << doc.child("scene").child("message").child_value("source") << endl
-		<< "text = " << doc.child("scene").child("message").child_value("text") << endl;
-} */

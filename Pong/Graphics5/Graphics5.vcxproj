@@ -145,6 +145,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Color.hpp" />
+    <ClInclude Include="LevelManager.hpp" />
+    <ClInclude Include="Player.hpp" />
     <ClInclude Include="globals.hpp" />
     <ClInclude Include="keyboard.hpp" />
     <ClInclude Include="particle.hpp" />

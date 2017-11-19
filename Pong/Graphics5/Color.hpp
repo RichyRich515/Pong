@@ -9,13 +9,12 @@ sf::Color lerpRGBA(sf::Color c1, sf::Color c2, float t)
 {
 	assert(t <= 1.0f && t >= 0.0f && " invalid t value");
 
-	// TODO: type missmatch
-	float r, g, b, a;
-	r = lerp(c1.r, c2.r, t);
-	g = lerp(c1.g, c2.g, t);
-	b = lerp(c1.b, c2.b, t);
-	a = lerp(c1.a, c2.a, t);
-
+	std::uint8_t r, g, b, a;
+	r = (std::uint8_t)lerp(c1.r, c2.r, t);
+	g = (std::uint8_t)lerp(c1.g, c2.g, t);
+	b = (std::uint8_t)lerp(c1.b, c2.b, t);
+	a = (std::uint8_t)lerp(c1.a, c2.a, t);
+	
 	return sf::Color(r, g, b, a);
 }
 
