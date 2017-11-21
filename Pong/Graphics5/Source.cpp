@@ -9,9 +9,6 @@
 #include <iomanip>
 #include <vector>
 
-float s_width = 901.0f;
-float s_height = 901.0f;
-
 // Character, Controls, Camera
 int main()
 {

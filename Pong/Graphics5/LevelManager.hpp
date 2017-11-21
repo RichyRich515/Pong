@@ -3,65 +3,80 @@
 #include "globals.hpp"
 #include <iostream>
 #include <fstream>
-#include <bitset>
 #include "SFML\Graphics.hpp"
 
-enum
-{
-	Empty = 0,
-	W,
-	S,
-	SW,
-	E,
-	EW,
-	ES,
-	ESW,
-	N,
-	NW,
-	NS,
-	NSW,
-	NE,
-	NEW,
-	NES,
-	NESW,
-};
+constexpr unsigned TILE_WIDTH = 50;
+constexpr unsigned TILE_HEIGHT = 50;
+constexpr unsigned X_TILES = 18;
+constexpr unsigned Y_TILES = 18;
 
-class Tile
+typedef enum
+{
+	bad_tile = -1,
+	ground = 0,
+	wall,
+	rock,
+	movable_rock,
+	door,
+	stair_up,
+	stair_down,
+	chest,
+
+	last_tile = 99
+} Tile_Type;
+
+static sf::Color getTileColor(int t)
+{
+	sf::Color c;
+	// TODO: use textures or something?
+	switch (t)
+	{
+	case ground:
+		c = sf::Color(130, 133, 120);
+		break;
+	case wall:
+		c = sf::Color(10, 10, 10);
+		break;
+	case rock:
+		c = sf::Color(127, 127, 127);
+		break;
+	case movable_rock:
+		c = sf::Color(144, 144, 144);
+		break;
+	case door:
+		c = sf::Color(255, 255, 50);
+		break;
+	case stair_up:
+		c = sf::Color(111, 33, 111);
+		break;
+	case stair_down:
+		c = sf::Color(33, 111, 33);
+		break;
+	case chest:
+		c = sf::Color(111, 255, 255);
+		break;
+	default:
+		c = sf::Color(255, 0, 255);
+	};
+	return c;
+}
+
+class Tile : public sf::RectangleShape
 {
 public:
-	bool n, e, s, w;
-
-	/*
-	 *	makes empty tile
-	 */
-	Tile()
+	Tile(int col, int row, /*Tile_Type*/ int t)
 	{
-		n = false;
-		e = false;
-		s = false;
-		w = false;
-	}
-
-	/* 
-	 *	takes an int (0 - 15) that uses the bits to represent which walls
-	 *	0th idx = right wall
-	 *	1 = top wall
-	 *	2 = left wall
-	 *	3 = bottom wall
-	 */
-	Tile(int walls)
-	{
-		n = walls & N;
-		e = walls & E;
-		s = walls & S;
-		w = walls & W;
+		this->setSize(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
+		this->setPosition(col * TILE_WIDTH, row * TILE_HEIGHT);
+		// TODO: proper coloring/texturing of tiles
+		this->setFillColor(getTileColor(t));
 	}
 };
 
 class LevelMap
 {
 public:
-	Tile tiles[36][36];
+	Tile* tiles[X_TILES][Y_TILES];
 
 	sf::RenderTexture LevelTexture;
 	sf::Sprite LevelSprite;
@@ -75,13 +90,19 @@ public:
 		int row = 0;
 		int col = 0;
 		int t = 0;
+
+		LevelTexture.create(s_width, s_height);
+		LevelTexture.clear();
+
 		while (infile >> t)
 		{
-			tiles[col][row] = Tile(t);
+			// TODO: error checking load
+			tiles[col][row] = new Tile(col, row, /*(Tile_Type)*/t);
 
 			std::cout << std::hex << t;
+			LevelTexture.draw(*tiles[col][row]);
 			// TODO: hardcoded values
-			if (++col == 36)
+			if (++col == X_TILES)
 			{
 				std::cout << std::endl;
 				++row;
@@ -89,45 +110,6 @@ public:
 			}
 		}
 
-		LevelTexture.create(s_width, s_height);
-		LevelTexture.clear();
-		
-		for (unsigned y = 0; y < 36; ++y)
-		{
-			for (unsigned x = 0; x < 36; ++x)
-			{
-			
-				//std::cout << tiles[col][row].n;
-				if (tiles[x][y].n)
-				{
-					sf::RectangleShape l(sf::Vector2f(25, 2));
-					l.setPosition(x * 25, y * 25);
-					l.setFillColor(sf::Color::Red);
-					LevelTexture.draw(l);
-				}
-				if (tiles[x][y].e)
-				{
-					sf::RectangleShape l(sf::Vector2f(2, 25));
-					l.setPosition(x * 25 + 25, y * 25);
-					l.setFillColor(sf::Color::Green);
-					LevelTexture.draw(l);
-				}
-				if (tiles[x][y].s)
-				{
-					sf::RectangleShape l(sf::Vector2f(25, 2));
-					l.setPosition(x * 25, y * 25 + 25);
-					l.setFillColor(sf::Color::Blue);
-					LevelTexture.draw(l);
-				}
-				if (tiles[x][y].w)
-				{
-					sf::RectangleShape l(sf::Vector2f(2, 25));
-					l.setPosition(x * 25, y * 25);
-					l.setFillColor(sf::Color::Yellow);
-					LevelTexture.draw(l);
-				}
-			}
-		}
 		LevelTexture.display();
 		const sf::Texture& texture = LevelTexture.getTexture();
 		LevelSprite.setTexture(texture);

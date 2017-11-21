@@ -110,10 +110,10 @@ public:
 					v[i]->alive = true;
 					v[i]->setShape(shape);
 					v[i]->setPosition(position);
-					float dir = random(directionLow, directionHigh);
-					float vel = random(startVelocityLow, startVelocityHigh);
+					float dir = randomf(directionLow, directionHigh);
+					float vel = randomf(startVelocityLow, startVelocityHigh);
 					v[i]->velocity = sf::Vector2f(vel * cos(toRAD(dir)), vel * sin(toRAD(dir)));
-					v[i]->lifetime = random(lifeLow, lifeHigh);
+					v[i]->lifetime = randomf(lifeLow, lifeHigh);
 					v[i]->life = 0;
 					v[i]->startcolor = startColor;
 					v[i]->endcolor = endColor;
@@ -143,10 +143,10 @@ public:
 				v[i]->alive = true;
 				v[i]->setShape(shape);
 				v[i]->setPosition(position);
-				float dir = random(directionLow, directionHigh);
-				float vel = random(startVelocityLow, startVelocityHigh);
+				float dir = randomf(directionLow, directionHigh);
+				float vel = randomf(startVelocityLow, startVelocityHigh);
 				v[i]->velocity = sf::Vector2f(vel * cos(toRAD(dir)), vel * sin(toRAD(dir)));
-				v[i]->lifetime = random(lifeLow, lifeHigh);
+				v[i]->lifetime = randomf(lifeLow, lifeHigh);
 				v[i]->life = 0;
 				v[i]->startcolor = startColor;
 				v[i]->endcolor = endColor;

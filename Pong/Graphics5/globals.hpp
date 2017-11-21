@@ -9,8 +9,8 @@ constexpr double PI = 3.141592654;
 
 #define toRAD(d) (d * PI / 180)
 
-extern float s_width;
-extern float s_height;
+constexpr float s_width = 900.0f;
+constexpr float s_height = 900.0f;
 
 extern int p1score;
 extern int p2score;
@@ -44,4 +44,9 @@ inline float lerp(float p0, float p1, float t) {
 int random(int l, int h)
 {
 	return rand() % (h - l + 1) + l;
+}
+
+float randomf(float l, float h)
+{
+	return rand() * (h - l + 1) + l;
 }
