@@ -28,7 +28,6 @@ typedef enum
 static sf::Color getTileColor(int t)
 {
 	sf::Color c;
-	// TODO: use textures or something?
 	switch (t)
 	{
 	case ground:
@@ -64,12 +63,12 @@ static sf::Color getTileColor(int t)
 class Tile : public sf::RectangleShape
 {
 public:
-	Tile(int col, int row, /*Tile_Type*/ int t)
+	Tile(int col, int row, /*Tile_Type*/ int t, sf::Texture const& texture)
 	{
 		this->setSize(sf::Vector2f(TILE_WIDTH, TILE_HEIGHT));
 		this->setPosition(col * TILE_WIDTH, row * TILE_HEIGHT);
-		// TODO: proper coloring/texturing of tiles
-		this->setFillColor(getTileColor(t));
+		this->setTexture(&texture);
+		//this->setTextureRect(sf::IntRect(sf::Vector2i(TILE_WIDTH, TILE_HEIGHT), sf::Vector2i(t * TILE_WIDTH, 0)));
 	}
 };
 
@@ -91,13 +90,16 @@ public:
 		int col = 0;
 		int t = 0;
 
+		sf::Texture levelsprite;
+		levelsprite.loadFromFile("floor.png");
+
 		LevelTexture.create(s_width, s_height);
 		LevelTexture.clear();
 
 		while (infile >> t)
 		{
 			// TODO: error checking load
-			tiles[col][row] = new Tile(col, row, /*(Tile_Type)*/t);
+			tiles[col][row] = new Tile(col, row, /*(Tile_Type)*/t, levelsprite);
 
 			std::cout << std::hex << t;
 			LevelTexture.draw(*tiles[col][row]);
