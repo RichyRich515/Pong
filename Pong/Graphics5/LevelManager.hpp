@@ -103,7 +103,6 @@ public:
 
 			std::cout << std::hex << t;
 			LevelTexture.draw(*tiles[col][row]);
-			// TODO: hardcoded values
 			if (++col == X_TILES)
 			{
 				std::cout << std::endl;

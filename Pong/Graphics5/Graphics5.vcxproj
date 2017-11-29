@@ -156,6 +156,7 @@
     <Media Include="sfx\boop.wav" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="floor.png" />
     <Image Include="TileSheet.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

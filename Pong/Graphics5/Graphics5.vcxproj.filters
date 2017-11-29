@@ -60,5 +60,8 @@
     <Image Include="TileSheet.png">
       <Filter>Resource Files\images</Filter>
     </Image>
+    <Image Include="floor.png">
+      <Filter>Resource Files\images</Filter>
+    </Image>
   </ItemGroup>
 </Project>
