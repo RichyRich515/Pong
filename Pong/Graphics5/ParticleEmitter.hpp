@@ -51,12 +51,7 @@ public:
 	ParticleEmitter()
 	{
 		poolsize = 500;
-		v = std::vector<Particle *>(poolsize);
-		for (size_t i = 0; i < poolsize; ++i)
-		{
-			Particle* temp = new Particle();
-			v[i] = temp;
-		}
+		ParticleEmitter(poolsize);
 	}
 
 	// initializes the internal vector
@@ -66,8 +61,7 @@ public:
 		v = std::vector<Particle *>(poolsize);
 		for (size_t i = 0; i < poolsize; ++i)
 		{
-			Particle* temp = new Particle();
-			v[i] = temp;
+			v[i] = new Particle();
 		}
 	}
 
@@ -175,6 +169,19 @@ public:
 		{
 			spawnTime = 1.0f / emission;
 			spawnClock = 0.0f;
+		}
+	}
+
+	// Copy constructor overload
+	// Really shouldn't be using this...
+	ParticleEmitter(ParticleEmitter const& src)
+	{
+		*this = src;
+		
+		v = std::vector<Particle *>(poolsize);
+		for (size_t i = 0; i < poolsize; ++i)
+		{
+			v[i] = new Particle();
 		}
 	}
 

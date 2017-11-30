@@ -160,12 +160,12 @@ int main()
 	burstEmitter1.active = true;
 	burstEmitter1.init();
 
-	ParticleEmitter burstEmitter2 = burstEmitter1;
+	ParticleEmitter burstEmitter2(burstEmitter1);
 	burstEmitter2.startColor = p2Color;
 	burstEmitter2.directionLow = 165;
 	burstEmitter2.directionHigh = 375;
 
-	ParticleEmitter burstEmitter3 = burstEmitter1;
+	ParticleEmitter burstEmitter3(burstEmitter1);
 	burstEmitter3.directionLow = 0;
 	burstEmitter3.directionHigh = 360;
 
